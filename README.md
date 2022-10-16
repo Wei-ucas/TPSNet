@@ -52,10 +52,10 @@ data
 │  └─MLT_train_images
 ├─syntext1
 │  │  train_polygon.json
-│  └─syntext_word_eng
+│  └─images
 ├─syntext2
 │  │  train_polygon.json
-│  └─emcs_imgs
+│  └─images
 
 ```
 
