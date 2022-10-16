@@ -49,7 +49,7 @@ data
 │      └─test
 ├─mlt2017
 │  │  train_polygon.json
-│  └─MLT_train_images
+│  └─images
 ├─syntext1
 │  │  train_polygon.json
 │  └─images
