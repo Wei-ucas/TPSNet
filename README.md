@@ -1,7 +1,7 @@
-#TPSNet
+# TPSNet
 A pytorch implementation for the ACM MM2022 paper "TPSNet: Reverse Thinking of Thin Plate Splines for Arbitrary Shape Scene Text Representation"
 
-##Environment
+## Environment
 This implementation is based on mmocr-0.2.1, so please refer to it for detailed requirements. Our code has been test with Pytorch-1.8.1 + cuda11.1
 We recommend using [Anaconda](https://www.anaconda.com/) to manage environments. Run the following commands to install dependencies.
 ```
@@ -18,7 +18,7 @@ cd mmocr/models/textend2end/utils/grid_sample_batch
 python setup.py build develop
 ```
 
-##Dataset
+## Dataset
 **Synthtext-150k**  [Source](https://github.com/aim-uofa/AdelaiDet/tree/master/configs/BAText)
 
 
@@ -60,19 +60,19 @@ data
 ```
 
 
-##Train
+## Train
 ###Pretrain
 `CUDA_VISIBLE_DEVICES=0,1 ./tools/train.sh config/tpsnet/tpsnet_pretrain.py work_dirs/pretrain 2
 `
-###Finetune
+### Finetune
 `CUDA_VISIBLE_DEVICES=0,1 ./tools/train.sh config/tpsnet/tpsnet_totaltext.py work_dirs/totaltext 2 --load-from work_dirs/pretrain/latest.pth`
 
-##Evaluation
+## Evaluation
 `CUDA_VISIBLE_DEVICES=0 python tools/test.py config/tpsnet/tpsnet_totaltext.py work_dirs/totaltext/latest.pth --eval hmean-e2e`
 
 The `hmean-e2e` evaluation code comes from [ABCNetV2](https://github.com/aim-uofa/AdelaiDet/tree/master/configs/BAText), see `mmocr/core/evaluation/evaluation_e2e` for details.
 
 
-##Trained Model
+## Trained Model
 Will be released soon.
 
