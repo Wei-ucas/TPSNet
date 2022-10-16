@@ -212,7 +212,7 @@ class TPSLoss(nn.Module):
         dist2gt_point = torch.norm((pred_boundary[:,:,None,:] - gt_boundary[:,None, :, :])**2, dim=-1) # N x n x n_gt
         dist2gt_boundary, index = dist2gt_point.min(dim=-1)
         # print(dist2gt_boundary)
-        loss= F.smooth_l1_loss(pred_boundary, torch.gather(gt_boundary, 1, index.unsqueeze(-1).expand(-1,-1,2)), reduction='none').mean(-2).sum(-1)
+        loss= F.smooth_l1_loss(pred_boundary, torch.gather(gt_boundary, 1, index.unsqueeze(-1).expand(-1,-1,2)), reduction='none').sum(-1)
         loss[dist2gt_boundary < (1 / scale) * self.border_relax_thr] = 0.0
         return loss.mean(-1)
 
