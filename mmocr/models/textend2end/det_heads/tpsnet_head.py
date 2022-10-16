@@ -25,7 +25,6 @@ class TPSHead(HeadMixin, BaseModule):
                  sample_size=(8,32),
                  # decoding_type='tps',
                  loss=dict(type='TPSLoss'),
-                 # with_direction=False,
                  score_thr=0.3,
                  nms_thr=0.1,
                  alpha=1.0,
@@ -44,7 +43,6 @@ class TPSHead(HeadMixin, BaseModule):
         self.scales = scales
         self.num_fiducial = num_fiducial
         self.sample_num = num_sample
-        # self.with_direction=with_direction
         self.num_reconstr_points = num_reconstr_points
         loss['num_fiducial'] = num_fiducial
         loss['fiducial_dist'] = fiducial_dist
@@ -54,7 +52,6 @@ class TPSHead(HeadMixin, BaseModule):
         self.use_sigmod = use_sigmod
         if self.use_sigmod:
             loss['use_sigmod'] = use_sigmod
-        # self.decoding_type = decoding_type
         self.loss_module = build_loss(loss)
         self.score_thr = score_thr
         self.nms_thr = nms_thr
@@ -85,12 +82,7 @@ class TPSHead(HeadMixin, BaseModule):
             # norm = dict(type='GN', num_groups=32, requires_grad=True)
             norm = None
             for i in range(self.num_convs):
-                # cls_convs.append(nn.Conv2d(self.in_channels, self.in_channels, kernel_size=3, stride=1, padding=1))
-                # # cls_convs.append(nn.BatchNorm2d(self.in_channels))
-                # cls_convs.append(nn.ReLU())
-                # reg_convs.append(nn.Conv2d(self.in_channels, self.in_channels, kernel_size=3, stride=1, padding=1))
-                # # reg_convs.append(nn.BatchNorm2d(self.in_channels))
-                # reg_convs.append(nn.ReLU())
+
                 cls_convs.append(ConvModule(self.in_channels, self.in_channels, kernel_size=3, stride=1, padding=1,
                                             conv_cfg=conv_cfg if i < 3 else None, norm_cfg=norm, act_cfg=dict(type='ReLU')))
                 reg_convs.append(ConvModule(self.in_channels, self.in_channels, kernel_size=3, stride=1, padding=1,
@@ -144,74 +136,10 @@ class TPSHead(HeadMixin, BaseModule):
             g[:] = g[:] * np.tile(scale_factor[:2], (sz,1))
         return grids
 
-    # def get_boundary(self, *args, **kwargs):
-    #     # if getattr(self.test_cfg, 'e2e', False):
-    #     #     return self.get_boundary_for_e2e_test(*args, **kwargs)
-    #     # if getattr(self.test_cfg,'with_grid',False):
-    #     #     return self.get_boundary_with_grids(*args, **kwargs)
-    #     # else:
-    #         return self._get_boundary(*args, **kwargs)
-
-    # def _get_boundary(self, score_maps, img_metas, rescale, gt_vis=False):
-    #     assert len(score_maps) == len(self.scales)
-    #
-    #     boundaries = []
-    #     for idx, score_map in enumerate(score_maps):
-    #         scale = self.scales[idx]
-    #         boundaries = boundaries + self._get_boundary_single(
-    #             score_map, scale, gt_vis)
-    #
-    #     # nms
-    #     boundaries = poly_nms(boundaries, self.nms_thr)
-    #
-    #     if rescale:
-    #         boundaries = self.resize_boundary(
-    #             boundaries, 1.0 / img_metas[0]['scale_factor'])
-    #
-    #     results = dict(boundary_result=boundaries)
-    #     return results
-
-    # def get_boundary(self, score_maps, img_metas, rescale, gt_vis=False):
-    #     assert len(score_maps) == len(self.scales)
-    #
-    #     boundaries = []
-    #     grids = []
-    #     for idx, score_map in enumerate(score_maps):
-    #         scale = self.scales[idx]
-    #         boundary, grid = self._get_boundary_single(
-    #             score_map, scale, gt_vis)
-    #         boundaries = boundaries + boundary
-    #         if len(grid) > 0:
-    #             grids = grids + [grid]
-    #
-    #     # nms
-    #     boundaries, keep_index = poly_nms(boundaries, self.nms_thr, with_index=True)
-    #     if len(grids) > 0:
-    #         grids = np.concatenate(grids, axis=0)[keep_index]
-    #
-    #         if rescale:
-    #             boundaries = self.resize_boundary(
-    #                 boundaries, 1.0 / img_metas[0]['scale_factor'])
-    #             grids = self.resize_grid(grids, 1.0 / img_metas[0]['scale_factor'])
-    #
-    #     results = dict(boundary_result=boundaries, grids_result=grids)
-    #     return results
 
 
     def get_boundary(self, score_maps, img_metas, rescale):
-        # assert len(score_maps) == len(self.scales)
-        #
-        # boundaries = [None] * len(self.scales)
-        # grids = [None] * len(self.scales)
-        # for idx, score_map in enumerate(score_maps):
-        #     scale = self.scales[idx]
-        #     boundaries[idx], grids[idx] = self._get_boundary_single(
-        #         score_map, scale, False
-        #     )
-        #     grids[idx] *= scale
-        #
-        # results = dict(boundary_results=boundaries, grids_results=grids, scales=self.scales)
-        # return results
+
         assert len(score_maps) == len(self.scales)
 
         boundaries = []
@@ -223,17 +151,11 @@ class TPSHead(HeadMixin, BaseModule):
             boundaries = boundaries + boundary
             if len(grid) > 0:
                 grids = grids + [grid*scale]
-                # grids = grids + [grid]
 
         # nms
         boundaries, keep_index = poly_nms(boundaries, self.nms_thr, with_index=True)
         if len(grids) > 0:
             grids = torch.cat(grids, dim=0)[keep_index]
-
-            # if rescale:
-            #     boundaries = self.resize_boundary(
-            #         boundaries, 1.0 / img_metas[0]['scale_factor'])
-            #     grids = self.resize_grid(grids, 1.0 / img_metas[0]['scale_factor'])
 
         results = dict(boundary_results=[boundaries], grids_results=[grids],scales=self.scales)
         return results
@@ -242,8 +164,7 @@ class TPSHead(HeadMixin, BaseModule):
 
     def _get_boundary_single(self, score_map, scale, gt_vis=False):
         assert len(score_map) == 2
-        # if not gt_vis:
-        #     assert score_map[1].shape[1] == 2 * (self.num_fiducial + 3)
+
 
         return tps_decode(
             # decoding_type=self.decoding_type,
