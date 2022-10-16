@@ -61,7 +61,7 @@ data
 
 
 ## Train
-###Pretrain
+### Pretrain
 `CUDA_VISIBLE_DEVICES=0,1 ./tools/train.sh config/tpsnet/tpsnet_pretrain.py work_dirs/pretrain 2
 `
 ### Finetune
