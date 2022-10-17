@@ -74,5 +74,5 @@ The `hmean-e2e` evaluation code comes from [ABCNetV2](https://github.com/aim-uof
 
 
 ## Trained Model
-Will be released soon.
+Total-Text : [Google Drive](https://drive.google.com/file/d/1eGsnXAgmFzYq8xJVR7805yV9fPNHASNH/view?usp=sharing)
 
