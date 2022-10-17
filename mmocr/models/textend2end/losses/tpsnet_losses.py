@@ -213,7 +213,7 @@ class TPSLoss(nn.Module):
         dist2gt_boundary, index = dist2gt_point.min(dim=-1)
         # print(dist2gt_boundary)
         loss= F.smooth_l1_loss(pred_boundary, torch.gather(gt_boundary, 1, index.unsqueeze(-1).expand(-1,-1,2)), reduction='none').sum(-1)
-        loss[dist2gt_boundary < (1 / scale) * self.border_relax_thr] = 0.0
+        loss[dist2gt_boundary < (1 / scale) *(1 - self.border_relax_thr)] = 0.0
         return loss.mean(-1)
 
     def ohem(self, predict, target, train_mask):

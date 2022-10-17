@@ -3,9 +3,7 @@ import numpy as np
 from mmdet.datasets.builder import DATASETS
 from mmocr.core.evaluation import eval_hmean_e2e
 import mmocr.utils as utils
-from mmocr.core.evaluation.hmean import eval_hmean
-import os
-# from mmocr.core.evaluation.total_deteval.Deteval import eval
+
 
 @DATASETS.register_module()
 class IcdarE2EDataset(IcdarDataset):
@@ -180,7 +178,7 @@ class IcdarE2EDataset(IcdarDataset):
         assert utils.is_type_list(results, dict)
 
         metrics = metric if isinstance(metric, list) else [metric]
-        allowed_metrics = ['hmean-e2e','hmean-iou', 'hmean-tiou','Deteval']
+        allowed_metrics = ['hmean-e2e']
         metrics = set(metrics) & set(allowed_metrics)
 
         img_infos = []
@@ -189,63 +187,20 @@ class IcdarE2EDataset(IcdarDataset):
             img_info = {'filename': self.data_infos[i]['file_name']}
             img_infos.append(img_info)
             ann_infos.append(self.get_ann_info(i))
-
-        # for ann in ann_infos:
-        #     masks = ann['masks']
-        #     mbs = []
-        #     for m in masks:
-        #         b = m[0]
-        #         mb = [[b[0],b[1],b[2],b[1],b[2],b[3],b[0],b[3]]]
-        #         mbs.append(mb)
-        #     ann['masks'] = mbs
-        if 'Deteval' in metrics:
-            best_h = 0
-            eval_results = {
-                'Deteval: recall': 0,
-                'Deteval: precision': 0,
-                'Deteval: hmean': 0
-            }
-            for thr in [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]:
-                out_path = 'work_dirs/total_det_txt'
-                print('Thr: {}'.format(thr))
-                if not os.path.exists(out_path):
-                    os.mkdir(out_path)
-                for i in range(len(results)):
-                    image_name = os.path.split(img_infos[i]['filename'])[-1]
-                    dets = results[i]['boundary_result']
-                    with open(os.path.join(out_path, image_name.replace('jpg', 'txt')), 'w') as f:
-                        for d in dets:
-                            if d[-1] >= thr:
-                                d = [str(int(round(d[p]))) for p in range(len(d) - 2, -1, -1)]
-                                f.write(','.join(d) + '\n')
-                tmp_results = eval(logger)
-                if tmp_results['Deteval: hmean'] > best_h:
-                    eval_results = tmp_results
-                    best_h = tmp_results['Deteval: hmean']
-        elif 'hmean-iou' in metrics or 'hmean-tiou' in metrics:
-            eval_results = eval_hmean(
+        if 'totaltext' in self.ann_file:
+            dataset_name = 'totaltext'
+        if 'ctw' in self.ann_file:
+            dataset_name = 'ctw1500'
+        eval_results = eval_hmean_e2e(
+            dataset_name,
             results,
-            img_infos,
-            ann_infos,
-            metrics=metrics,
-            score_thr=score_thr,
+            self.coco,
+            # img_infos,
+            # ann_infos,
+            # metrics=metrics,
+            # score_thr=score_thr,
             logger=logger,
-            rank_list=rank_list)
-        else:
-            if 'totaltext' in self.ann_file:
-                dataset_name = 'totaltext'
-            if 'ctw' in self.ann_file:
-                dataset_name = 'ctw1500'
-            eval_results = eval_hmean_e2e(
-                dataset_name,
-                results,
-                self.coco,
-                # img_infos,
-                # ann_infos,
-                # metrics=metrics,
-                # score_thr=score_thr,
-                logger=logger,
-                # rank_list=rank_list
-            )
+            # rank_list=rank_list
+        )
 
         return eval_results

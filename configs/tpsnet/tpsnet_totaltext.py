@@ -31,7 +31,7 @@ model = dict(
         scales=(8, 16, 32),
         sample_size=(8,32),
         loss=dict(type='TPSLoss',gauss_center=True,
-                  point_loss=True, with_BA=False,border_relax_thr=0.8),
+                  point_loss=False, with_BA=True,border_relax_thr=0.8),
         num_fiducial=num_fiducial,
         fiducial_dist="cross",
         num_convs=4),
