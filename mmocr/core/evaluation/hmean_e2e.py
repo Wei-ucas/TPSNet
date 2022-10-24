@@ -56,7 +56,7 @@ def eval_hmean_e2e(eval_dataset, results, coco_annos, logger=None):
     dets = []
     e2es = []
     for t in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8, 0.9]:
-        print("---------------Score Thr: {}---------------".format(t), logger)
+        print("---------------Score Thr: {}---------------".format(t))
         cfg['INFERENCE_TH_TEST'] = t # tune this parameter to achieve best result
         e = TextEvaluator(dataset_name, cfg, False, output_dir= outdir)
         res = e.evaluate()
@@ -76,11 +76,11 @@ def eval_hmean_e2e(eval_dataset, results, coco_annos, logger=None):
     # print("End-to-End results: {}".format(best_e2e))
 
     # if logger is not None:
-    print("---------------Final Results---------------", logger)
+    print("---------------Final Results---------------")
     print_log("Detection results:   " + ', '.join(' : '.join([a, str(best_det[a])]) for a in best_det), logger)
     print_log("E2E results:   " + ', '.join(' : '.join([a, str(best_e2e[a])]) for a in best_e2e), logger)
 
-    return {'e2e-hmean':best_e2e['hmean'], 'det_hmean':best_det['hmean']}
+    return {'e2e-hmean':best_e2e['hmean'], 'det-hmean':best_det['hmean']}
 #
 # if __name__ == '__main__':
 #     res = sys.argv[1]
