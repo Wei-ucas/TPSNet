@@ -50,12 +50,14 @@ data
 ├─mlt2017
 │  │  train_polygon.json
 │  └─images
-├─syntext1
-│  │  train_polygon.json
-│  └─images
-├─syntext2
-│  │  train_polygon.json
-│  └─images
+├─synthtext-150k
+      ├─syntext1
+      │  │  train_polygon.json
+      │  └─images
+      ├─syntext2
+         │  train_polygon.json
+         └─images
+
 
 ```
 
@@ -74,5 +76,6 @@ The `hmean-e2e` evaluation code comes from [ABCNetV2](https://github.com/aim-uof
 
 
 ## Trained Model
+Pretrain: [Google Drive](https://drive.google.com/file/d/1dK78qz2V59IkBUjjdodFXnq72EpUXF4s/view?usp=sharing)
 Total-Text : [Google Drive](https://drive.google.com/file/d/1eGsnXAgmFzYq8xJVR7805yV9fPNHASNH/view?usp=sharing)
-
+CTW1500: [Google Drive](https://drive.google.com/file/d/12q6bdczYxpKXA08kbUqy3y9pn3knidxj/view?usp=sharing)
