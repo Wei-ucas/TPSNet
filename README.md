@@ -81,5 +81,5 @@ Total-Text : [Google Drive](https://drive.google.com/file/d/1eGsnXAgmFzYq8xJVR78
 CTW1500: [Google Drive](https://drive.google.com/file/d/12q6bdczYxpKXA08kbUqy3y9pn3knidxj/view?usp=sharing)
 
 
-##Acknowledgement
+## Acknowledgement
 We sincerely thank [MMOCR](https://github.com/open-mmlab/mmocr), [ABCNet](https://github.com/aim-uofa/AdelaiDet/tree/master/configs/BAText) for their excellent works.
