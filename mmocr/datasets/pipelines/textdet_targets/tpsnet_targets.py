@@ -244,7 +244,7 @@ class TPSTargets(TextSnakeTargets):
         else:
             top_indx = np.arange(0, top_sideline.shape[0])
         top_sideline = top_sideline[top_indx]
-        if not self.with_direction and direction == 1 and top_sideline[0, direction] < top_sideline[-1, direction]:
+        if direction == 1 and top_sideline[0, direction] < top_sideline[-1, direction]:
             top_indx = np.arange(top_sideline.shape[0] - 1, -1, -1)
             top_sideline = top_sideline[top_indx]
 
@@ -253,14 +253,12 @@ class TPSTargets(TextSnakeTargets):
         else:
             bot_indx = np.arange(0, bot_sideline.shape[0])
         bot_sideline = bot_sideline[bot_indx]
-        if not self.with_direction and direction == 1 and bot_sideline[0, direction] < bot_sideline[-1, direction]:
+        if direction == 1 and bot_sideline[0, direction] < bot_sideline[-1, direction]:
             bot_indx = np.arange(bot_sideline.shape[0] - 1, -1, -1)
             bot_sideline = bot_sideline[bot_indx]
         if top_sideline[:, 1 - direction].mean() > bot_sideline[:, 1 - direction].mean():
             top_sideline, bot_sideline = bot_sideline, top_sideline
 
-        if not self.with_direction:
-            direction = 0
         return top_sideline, bot_sideline, direction
 
 
@@ -297,14 +295,15 @@ class TPSTargets(TextSnakeTargets):
         # assert points.shape[0] % 2 == 0, "The data number should be 2 times"
         if self.reoder:
             head_edge, tail_edge, top_sideline, bot_sideline = super(TPSTargets, self).reorder_poly_edge(points)
-            bot_sideline = bot_sideline[::-1]
+            # bot_sideline = bot_sideline[::-1]
+            top_sideline, bot_sideline,_ = self.clockwise(head_edge, tail_edge, top_sideline, bot_sideline)
         else:
             lh = points.shape[0]
             lhc2 = int(lh / 2)
             top_sideline = points[:lhc2]
             bot_sideline = points[lhc2:][::-1]
-            head_edge = np.stack((top_sideline[0], bot_sideline[0]), 0)
-            tail_edge = np.stack((top_sideline[-1], bot_sideline[-1]), 0)
+        head_edge = np.stack((top_sideline[0], bot_sideline[0]), 0)
+        tail_edge = np.stack((top_sideline[-1], bot_sideline[-1]), 0)
         return head_edge, tail_edge, top_sideline, bot_sideline
 
     def generate_tps_maps(self, img_size, text_polys,text_polys_idx=None, img=None, level_size=None):

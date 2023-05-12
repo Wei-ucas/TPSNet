@@ -157,7 +157,11 @@ class TPSHead(HeadMixin, BaseModule):
         if len(grids) > 0:
             grids = torch.cat(grids, dim=0)[keep_index]
 
-        results = dict(boundary_results=[boundaries], grids_results=[grids],scales=self.scales)
+        if rescale:
+            boundaries = self.resize_boundary(
+                boundaries, 1.0 / img_metas[0]['scale_factor'])
+
+        results = dict(boundary_result=boundaries, grids_results=grids,scales=self.scales)
         return results
 
 

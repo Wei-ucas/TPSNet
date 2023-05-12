@@ -262,8 +262,8 @@ class TPSRecogHead(nn.Module,HeadMixin):
                 all_feat = mask_feat + feature_maps[i]
                 mask_features.append(all_feat)
             feature_maps = mask_features
-        grids = det_results['grids_results']
-        boundaries = det_results['boundary_results']
+        grids = [det_results['grids_results']]
+        boundaries = [det_results['boundary_result']]
         scales = det_results['scales']
 
         lgrids = []

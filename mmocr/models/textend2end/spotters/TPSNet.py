@@ -20,8 +20,10 @@ class TPSNet(FCENet):
                  init_cfg=None,
                  from_p2=False):
         super(TPSNet, self).__init__(backbone, neck, bbox_head, train_cfg, test_cfg, pretrained, show_score, init_cfg)
-
-        self.recog_head = build_head(recog_head)
+        if recog_head is not None:
+            self.recog_head = build_head(recog_head)
+        else:
+            self.recog_head = None
         self.from_p2 = from_p2
 
     def forward_train(self, img, img_metas, **kwargs):
@@ -40,10 +42,11 @@ class TPSNet(FCENet):
         x = self.extract_feat(img)
         preds = self.bbox_head(x[1:])
         losses = self.bbox_head.loss(preds, **kwargs)
-        recog_losses,_,_ = self.recog_head(x[:-1], preds, **kwargs)
-        # recog_losses = self.recog_head([img]*3, None, **kwargs)
+        if self.recog_head is not None:
+            recog_losses,_,_ = self.recog_head(x[:-1], preds, **kwargs)
+            # recog_losses = self.recog_head([img]*3, None, **kwargs)
 
-        losses.update(recog_losses)
+            losses.update(recog_losses)
         return losses
 
     def simple_test(self, img, img_metas, rescale=False):
@@ -63,11 +66,13 @@ class TPSNet(FCENet):
 
         else:
             boundaries = [
-                self.bbox_head.get_boundary(outs, img_metas, rescale)
+                self.bbox_head.get_boundary(outs, img_metas, False if self.recog_head is not None else True)
+                # self.bbox_head.get_boundary(outs, img_metas, True)
             ]
 
         # grids = boundaries['grids_result'] # list
         # boundaries
-        boundaries = [self.recog_head.simple_test(x[:-1], boundaries[0], img_metas=img_metas, rescale=rescale)]
+        if self.recog_head is not None:
+            boundaries = [self.recog_head.simple_test(x[:-1], boundaries[0], img_metas=img_metas, rescale=True)]
 
         return boundaries

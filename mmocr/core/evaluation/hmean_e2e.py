@@ -17,7 +17,10 @@ def eval_hmean_e2e(eval_dataset, results, coco_annos, logger=None):
         # idx = str(img_id).zfill(7)
         res = results[i]
         ins = res['boundary_result']
-        recs = res['strs']
+        if 'strs' in res.keys():
+            recs = res['strs']
+        else:
+            recs = [""] * len(ins)
         for j in range(len(ins)):
             pts = np.array(ins[j][:-1]).reshape(-1,2).tolist()
             score = ins[j][-1]

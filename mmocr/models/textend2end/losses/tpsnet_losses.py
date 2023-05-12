@@ -187,6 +187,8 @@ class TPSLoss(nn.Module):
                 loss_ba = torch.sum(weight*(loss_cor+loss_ba))
 
             if self.with_point_loss:
+                if self.with_BA:
+                    boder_gt = boder_gt[:,::5]
                 # weight = weight.view(-1,1)
                 ft_x, ft_y =boder_gt[:,:,0], boder_gt[:,:,1]
                 ft_x_pre, ft_y_pre = boder_pre[:,:,0], boder_pre[:,:,1]
