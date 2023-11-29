@@ -22,7 +22,7 @@ python setup.py build develop
 **Synthtext-150k**  [Source](https://github.com/aim-uofa/AdelaiDet/tree/master/configs/BAText)
 
 
-**MLT17**[[source]](https://rrc.cvc.uab.es/?ch=8&com=introduction) 
+**MLT**[[source]](https://github.com/aim-uofa/AdelaiDet/blob/master/datasets/README.md) 
 
 
 **Total-Text** [[source]](https://github.com/cs-chan/Total-Text-Dataset). 
@@ -47,7 +47,7 @@ data
 │  └─imgs
 │      ├─training
 │      └─test
-├─mlt2017
+├─mlt
 │  │  train_polygon.json
 │  └─images
 ├─synthtext-150k
